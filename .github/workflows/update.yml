@@ -2,7 +2,7 @@ name: Actualizar Tasas BCV
 
 on:
   schedule:
-    - cron: '0 8,14,20 * * 1-5'  # 8am, 2pm y 8pm UTC, solo lunes a viernes
+    - cron: '0 6,10,14,18 * * 1-5'  # 8am, 2pm y 8pm UTC, solo lunes a viernes
   workflow_dispatch:  # Permite correrlo manualmente
 
 permissions:
