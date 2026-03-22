@@ -34,26 +34,18 @@ def get_bcv_rates():
         "rub": extract_rate("rublo")
     }
 
+    # Guardar con la fecha valor EXACTA del BCV
+    # La app Android buscará la entrada más reciente <= hoy
     try:
         date_span = soup.select_one("span.date-display-single")
-        fecha_valor = date_span['content'][:10]  # "2026-03-23"
+        fecha_str = date_span['content'][:10]  # "2026-03-23"
     except:
         print("No se encontró la fecha en el BCV")
         return
 
-    if not fecha_valor or rates["usd"] == 0.0:
+    if not fecha_str or rates["usd"] == 0.0:
         print("Datos inválidos, no se guarda nada")
         return
-
-    # La fecha que guardamos es la ANTERIOR a la fecha valor
-    # (el BCV publica hoy la tasa de mañana, nosotros la guardamos con la fecha de hoy)
-    from datetime import datetime, timedelta
-    fecha_valor_dt = datetime.strptime(fecha_valor, "%Y-%m-%d")
-    fecha_hoy = fecha_valor_dt - timedelta(days=1)
-    # Si la fecha valor es lunes, la tasa fue publicada el viernes (restar 3 días)
-    if fecha_valor_dt.weekday() == 0:  # 0 = lunes
-        fecha_hoy = fecha_valor_dt - timedelta(days=3)
-    fecha_str = fecha_hoy.strftime("%Y-%m-%d")
 
     history = {}
     if os.path.exists(FILE_NAME):
@@ -70,7 +62,7 @@ def get_bcv_rates():
 
     with open(FILE_NAME, 'w', encoding='utf-8') as f:
         json.dump(trimmed_history, f, indent=2)
-    print(f"Tasa guardada para: {fecha_str} → USD {rates['usd']}")
+    print(f"Tasa guardada para fecha valor: {fecha_str} → USD {rates['usd']}")
 
 if __name__ == "__main__":
     get_bcv_rates()
